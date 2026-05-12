@@ -15,4 +15,7 @@ Para abrir la app es necesario tener la aplicación "Expo Go" instalada en un di
 
 ## Video de demostración
 
-[Link](https://youtu.be/kUJ1RLTDOAA)
+- [Demo](https://youtu.be/kUJ1RLTDOAA)
+- [Demo notificaciones](https://youtu.be/svg8eWyCU8A)
+
+Error de compilación de APK: `Task :react-native-screens:configureCMakeRelWithDebInfo[arm64-v8a] FAILED`
