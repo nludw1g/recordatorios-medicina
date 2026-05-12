@@ -13,6 +13,6 @@ Para abrir la app es necesario tener la aplicación "Expo Go" instalada en un di
 - Registro e inicio de sesión con almacenamiento local
 - Agregado y eliminación de recordatorios con almacenamiento local y notificaciones programadas
 
-## Video de demonstración
+## Video de demostración
 
 [Link](https://youtu.be/kUJ1RLTDOAA)
