@@ -15,9 +15,6 @@ function MedicationReminder({ reminder }: { reminder: Reminder }) {
               <ThemedText>{reminder.time}</ThemedText>
           </View>
           <View style={styles.buttonsContainer}>
-              <TouchableOpacity onPress={() => console.info('Edit reminder')}>
-                  <IconSymbol name='pencil' color="black" />
-              </TouchableOpacity>
               <TouchableOpacity onPress={() => removeReminder(reminder.name)}>
                   <IconSymbol name='trash' color="black" />
               </TouchableOpacity>

@@ -34,6 +34,7 @@ async function getRemindersStorage(): Promise<RemindersStorageType> {
     try {
         const remindersStorage = await AsyncStorage.getItem('reminders');
         if (remindersStorage) {
+            console.debug("Retrieved reminders storage:", remindersStorage);
             return JSON.parse(remindersStorage) as RemindersStorageType;
         }
     } catch {
@@ -109,28 +110,30 @@ export function RemindersProvider({ children }: { children: React.ReactNode }) {
     }, [username]);
 
     async function addReminder(reminder: Reminder) {
-        if (!authContext?.user) return;
+        if (!username) return;
+        console.log('Adding reminder:', reminder);
         const newReminders = [...reminders, reminder];
         setReminders(newReminders);
         const storage = await getRemindersStorage();
-        await AsyncStorage.setItem('reminders', JSON.stringify({ ...storage, [authContext.user]: newReminders }));
+        await AsyncStorage.setItem('reminders', JSON.stringify({ ...storage, [username]: newReminders }));
         await scheduleReminderNotification(reminder);
     }
 
     async function clearReminders() {
-        if (!authContext?.user) return;
+        if (!username) return;
         setReminders([]);
         const storage = await getRemindersStorage();
-        await AsyncStorage.setItem('reminders', JSON.stringify({ ...storage, [authContext.user]: [] }));
+        await AsyncStorage.setItem('reminders', JSON.stringify({ ...storage, [username]: [] }));
     }
 
     async function removeReminder(name: string) {
-        if (!authContext?.user) return;
+        if (!username) return;
+        console.log('Removing reminder:', name);
         await cancelReminderNotification(name);
         const newReminders = reminders.filter((r) => r.name !== name);
         setReminders(newReminders);
         const storage = await getRemindersStorage();
-        await AsyncStorage.setItem('reminders', JSON.stringify({ ...storage, [authContext.user]: newReminders }));
+        await AsyncStorage.setItem('reminders', JSON.stringify({ ...storage, [username]: newReminders }));
     }
 
     return (
