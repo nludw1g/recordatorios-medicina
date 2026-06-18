@@ -15,6 +15,9 @@ Notifications.setNotificationHandler({
 export type Reminder = {
     name: string;
     time: string;
+    image?: string;
+    location?: string;
+    contact?: string;
 };
 
 type RemindersStorageType = {

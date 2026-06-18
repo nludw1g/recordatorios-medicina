@@ -3,7 +3,7 @@ import { ThemedView } from '@/components/themed-view'
 import { IconSymbol } from '@/components/ui/icon-symbol'
 import { Reminder, useReminders } from '@/contexts/RemindersContext'
 import React from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 function MedicationReminder({ reminder }: { reminder: Reminder }) {
     const { removeReminder } = useReminders();
@@ -13,8 +13,11 @@ function MedicationReminder({ reminder }: { reminder: Reminder }) {
           <View>
               <ThemedText>{reminder.name}</ThemedText>
               <ThemedText>{reminder.time}</ThemedText>
+              {reminder.location && <ThemedText>Ubicación: {reminder.location}</ThemedText>}
+              {reminder.contact && <ThemedText>Contacto: {reminder.contact}</ThemedText>}
           </View>
           <View style={styles.buttonsContainer}>
+              {reminder.image && <Image source={{ uri: reminder.image }} style={{ width: 50, height: 50, borderRadius: 25 }} />}
               <TouchableOpacity onPress={() => removeReminder(reminder.name)}>
                   <IconSymbol name='trash' color="black" />
               </TouchableOpacity>
