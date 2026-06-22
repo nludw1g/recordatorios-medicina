@@ -20,7 +20,7 @@ function MedicationReminder({ reminder }: { reminder: Reminder }) {
           </View>
           <View style={styles.buttonsContainer}>
               {reminder.image && <Image source={{ uri: reminder.image }} style={{ width: 50, height: 50, borderRadius: 25 }} />}
-              <TouchableOpacity onPress={() => removeReminder(authContext.user!, reminder.name)}>
+              <TouchableOpacity testID="remove-button" onPress={() => removeReminder(authContext.user!, reminder.name)}>
                   <IconSymbol name='trash' color="black" />
               </TouchableOpacity>
           </View>
