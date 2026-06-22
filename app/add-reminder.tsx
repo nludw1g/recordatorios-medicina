@@ -19,6 +19,11 @@ function AddReminder() {
     const [location, setLocation] = useState('');
     const [contact, setContact] = useState('');
     const [contacts, setContacts] = useState<Contact.Contact[]>([]);
+    const [grantedPermissions, setGrantedPermissions] = useState({
+        calendar: false,
+        contacts: false,
+        location: false,
+    });
     const authContext = useContext(AuthContext)!;
     const { addReminder } = useRemindersStore();
     const router = useRouter();
@@ -77,6 +82,8 @@ function AddReminder() {
             console.log("Calendar permissions status:", status);
             if (status !== 'granted') {
                 Alert.alert("Es necesario otorgar permisos para acceder al calendario.");
+            } else {
+                setGrantedPermissions(prev => ({ ...prev, calendar: true }));
             }
 
             const { status: contactStatus } = await Contact.requestPermissionsAsync();
@@ -84,6 +91,7 @@ function AddReminder() {
             if (contactStatus !== 'granted') { 
                 Alert.alert("Es necesario otorgar permisos para acceder a los contactos.");
             } else {
+                setGrantedPermissions(prev => ({ ...prev, contacts: true }));
                 const {data} = await Contact.getContactsAsync({pageSize: 10, fields: [Contact.Fields.Name, Contact.Fields.PhoneNumbers]});
                 setContacts(data);
             }
@@ -93,6 +101,7 @@ function AddReminder() {
             if (locationStatus !== 'granted') {
                 Alert.alert("Es necesario otorgar permisos para acceder a la ubicación.");
             } else {
+                setGrantedPermissions(prev => ({ ...prev, location: true }));
                 const currentLocation = await Location.getCurrentPositionAsync({});
                 console.log("Current location:", currentLocation);
                 setLocation(`${currentLocation.coords.latitude.toFixed(4)}, ${currentLocation.coords.longitude.toFixed(4)}`);
@@ -108,12 +117,18 @@ function AddReminder() {
               <TouchableOpacity onPress={openTimePicker} style={styles.input}>
                     <ThemedText>Seleccionar hora: {date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false })}</ThemedText>
               </TouchableOpacity>
-              <ThemedText style={{ marginBottom: 10 }}>Ubicación de la farmacia: {location}</ThemedText>
+              {grantedPermissions.location ? (
+                  <ThemedText style={{ marginBottom: 10 }}>Ubicación de la farmacia: {location}</ThemedText>
+              ) : (
+                    <ThemedText style={{ marginBottom: 10, color: 'red' }}>Permiso de ubicación no otorgado.</ThemedText>
+              )}
               <TouchableOpacity onPress={onChangeImage} style={styles.input}>
                     <ThemedText>{image ? 'Cambiar imagén' : 'Seleccionar imagén'}</ThemedText>
               </TouchableOpacity>
               {image && <Image source={{ uri: image }} style={styles.image} />}
-              {contacts.length > 0 && (
+              {grantedPermissions.contacts ? (
+                  <>
+                  {contacts.length > 0 && (
                   <View style={{ marginVertical: 10 }}>
                       <ThemedText>Seleccione el contacto del médico:</ThemedText>
                       {contacts.map(c => (
@@ -122,6 +137,10 @@ function AddReminder() {
                             </TouchableOpacity>
                       ))}
                   </View>
+                    )}
+                  </>
+              ) : (
+                    <ThemedText style={{ marginBottom: 10, color: 'red' }}>Permiso de contactos no otorgado.</ThemedText>
               )}
               <TouchableOpacity onPress={onAddReminder} style={styles.addReminderBtn}>
                     <ThemedText>Agregar recordatorio</ThemedText>
