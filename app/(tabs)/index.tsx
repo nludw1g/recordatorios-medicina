@@ -1,10 +1,11 @@
-import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import MedicationReminder from '@/components/medication-reminder';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { AuthContext } from '@/contexts/AuthContext';
 import { setupRemindersStore, useRemindersStore } from '@/store/reminders';
+import * as Notifications from "expo-notifications";
 import { useRouter } from 'expo-router';
 import { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +20,15 @@ export default function HomeScreen() {
       setupRemindersStore();
     }
   }, [reminders]);
+
+  useEffect(() => {
+    Notifications.requestPermissionsAsync().then((status) => {
+      console.log('Notification permissions:', status);
+      if (!status.granted) { 
+        Alert.alert("Es necesario otorgar permisos de notificación para mostrar recordatorios.");
+      }
+    });
+  }, []);
 
   return (
     <SafeAreaView style={styles.safe}>
