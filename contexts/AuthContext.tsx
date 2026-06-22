@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { createContext, useEffect, useState } from "react";
 
 type AuthContextType = {
-    user: any;
+    user: string | null;
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;

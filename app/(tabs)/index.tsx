@@ -3,24 +3,33 @@ import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import MedicationReminder from '@/components/medication-reminder';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { useReminders } from '@/contexts/RemindersContext';
+import { AuthContext } from '@/contexts/AuthContext';
+import { setupRemindersStore, useRemindersStore } from '@/store/reminders';
 import { useRouter } from 'expo-router';
+import { useContext, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
-  const { reminders } = useReminders();
+  const { reminders } = useRemindersStore();
+  const authContext = useContext(AuthContext)!;
   const router = useRouter();
+
+  useEffect(() => {
+    if (Object.keys(reminders).length === 0) { 
+      setupRemindersStore();
+    }
+  }, [reminders]);
 
   return (
     <SafeAreaView style={styles.safe}>
       <ThemedText type='title'>💊 Recordatorios de medicación</ThemedText>
       <View style={styles.container}>
-        {reminders.length === 0 ? (
+        {reminders[authContext.user!]?.length === 0 ? (
           <ThemedText>No tienes recordatorios. Agrega uno para empezar.</ThemedText>
         ): (
           <FlatList
           style={{ width: '100%' }}
-          data={reminders}
+          data={reminders[authContext.user!]}
           renderItem={({ item }) => <MedicationReminder reminder={item} />}
           keyExtractor={(item) => item.name}
         />

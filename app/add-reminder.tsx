@@ -1,13 +1,14 @@
 import { ThemedText } from '@/components/themed-text';
+import { AuthContext } from '@/contexts/AuthContext';
+import { useRemindersStore } from '@/store/reminders';
 
-import { useReminders } from '@/contexts/RemindersContext';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import * as Calendar from 'expo-calendar';
 import * as Contact from 'expo-contacts';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -18,7 +19,8 @@ function AddReminder() {
     const [location, setLocation] = useState('');
     const [contact, setContact] = useState('');
     const [contacts, setContacts] = useState<Contact.Contact[]>([]);
-    const { addReminder } = useReminders();
+    const authContext = useContext(AuthContext)!;
+    const { addReminder } = useRemindersStore();
     const router = useRouter();
 
     function openTimePicker() {
@@ -34,7 +36,7 @@ function AddReminder() {
 
     function onAddReminder() {
         if (!name) return;
-        addReminder({ name, time: date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false }), image, location, contact });
+        addReminder(authContext.user!, { name, time: date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit', hour12: false }), image, location, contact });
         Calendar.getCalendarsAsync().then(calendars => {
             const calendar = calendars.find(cal => cal.isPrimary && cal.allowsModifications);
             if (calendar) {
